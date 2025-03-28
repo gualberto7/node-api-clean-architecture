@@ -1,6 +1,7 @@
 import { Router, RequestHandler } from "express";
 import { UserController } from "../controllers/UserController";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { AuthService } from "../../infrastructure/services/AuthService";
 
 const wrapAsync = (fn: Function): RequestHandler => {
   return (req, res, next) => {
@@ -8,9 +9,12 @@ const wrapAsync = (fn: Function): RequestHandler => {
   };
 };
 
-export const createUserRoutes = (userRepository: IUserRepository) => {
+export const createUserRoutes = (
+  userRepository: IUserRepository,
+  authService: AuthService
+) => {
   const router = Router();
-  const userController = new UserController(userRepository);
+  const userController = new UserController(userRepository, authService);
 
   router.post("/", wrapAsync(userController.createUser.bind(userController)));
   router.get(

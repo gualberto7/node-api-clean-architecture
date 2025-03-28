@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
 import { CreateUserUseCase } from "../../application/useCases/user/CreateUserUseCase";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
+import { AuthService } from "../../infrastructure/services/AuthService";
 
 export class UserController {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private authService: AuthService
+  ) {}
 
   async createUser(req: Request, res: Response) {
     try {
-      const createUserUseCase = new CreateUserUseCase(this.userRepository);
+      const createUserUseCase = new CreateUserUseCase(
+        this.userRepository,
+        this.authService
+      );
       const user = await createUserUseCase.execute(req.body);
       return res.status(201).json(user);
     } catch (error) {

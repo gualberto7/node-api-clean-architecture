@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { MongoUserRepository } from "./infrastructure/repositories/MongoUserRepository";
 import { createUserRoutes } from "./interfaces/routes/userRoutes";
+import { createAuthRoutes } from "./interfaces/routes/authRoutes";
+import { AuthService } from "./infrastructure/services/AuthService";
+import { authMiddleware } from "./interfaces/middleware/authMiddleware";
 
 // Load environment variables
 dotenv.config();
@@ -26,9 +29,17 @@ mongoose
     console.error("MongoDB connection error:", error);
   });
 
+// Services
+const authService = new AuthService();
+
 // Routes
 const userRepository = new MongoUserRepository();
-app.use("/api/users", createUserRoutes(userRepository));
+
+// Public routes
+app.use("/api/auth", createAuthRoutes(userRepository, authService));
+
+// Protected routes
+app.use("/api/users", createUserRoutes(userRepository, authService));
 
 // Basic route
 app.get("/", (_req, res) => {

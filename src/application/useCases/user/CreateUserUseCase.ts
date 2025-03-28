@@ -1,8 +1,12 @@
 import { User } from "../../../domain/entities/User";
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
+import { AuthService } from "../../../infrastructure/services/AuthService";
 
 export class CreateUserUseCase {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private authService: AuthService
+  ) {}
 
   async execute(
     userData: Omit<User, "id" | "createdAt" | "updatedAt">
@@ -13,8 +17,17 @@ export class CreateUserUseCase {
       throw new Error("User already exists");
     }
 
-    // Crear el usuario
-    const user = await this.userRepository.create(userData);
+    // Encriptar la contraseña
+    const hashedPassword = await this.authService.hashPassword(
+      userData.password
+    );
+
+    // Crear el usuario con la contraseña encriptada
+    const user = await this.userRepository.create({
+      ...userData,
+      password: hashedPassword,
+    });
+
     return user;
   }
 }
