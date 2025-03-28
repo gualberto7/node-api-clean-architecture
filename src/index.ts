@@ -25,8 +25,8 @@ mongoose
   });
 
 // Basic route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Gym API" });
+app.get("/", (_req, res) => {
+  res.json({ message: "Welcome to Gym API xD" });
 });
 
 // Start server
