@@ -2,16 +2,17 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import { MongoUserRepository } from "./infrastructure/repositories/MongoUserRepository";
 import { createUserRoutes } from "./interfaces/routes/userRoutes";
 import { createAuthRoutes } from "./interfaces/routes/authRoutes";
 import { AuthService } from "./infrastructure/services/AuthService";
 import { authMiddleware } from "./interfaces/middleware/authMiddleware";
+import { connectDB } from "./infrastructure/config/database";
 
 // Load environment variables
 dotenv.config();
 
+// Initialize express app
 const app = express();
 
 // Middleware
@@ -19,21 +20,14 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-// Database connection
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/gym-api")
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error);
-  });
-
-// Services
+// Initialize services
 const authService = new AuthService();
+const userRepository = new MongoUserRepository();
 
 // Routes
-const userRepository = new MongoUserRepository();
+app.get("/", (_req, res) => {
+  res.json({ message: "Welcome to Gym API" });
+});
 
 // Public routes
 app.use("/api/auth", createAuthRoutes(userRepository, authService));
@@ -45,13 +39,19 @@ app.use(
   createUserRoutes(userRepository, authService)
 );
 
-// Basic route
-app.get("/", (_req, res) => {
-  res.json({ message: "Welcome to Gym API" });
-});
-
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
