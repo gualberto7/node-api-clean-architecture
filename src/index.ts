@@ -39,7 +39,11 @@ const userRepository = new MongoUserRepository();
 app.use("/api/auth", createAuthRoutes(userRepository, authService));
 
 // Protected routes
-app.use("/api/users", createUserRoutes(userRepository, authService));
+app.use(
+  "/api/users",
+  authMiddleware(authService),
+  createUserRoutes(userRepository, authService)
+);
 
 // Basic route
 app.get("/", (_req, res) => {

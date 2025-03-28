@@ -14,20 +14,22 @@ export const authMiddleware = (authService: AuthService) => {
       const authHeader = req.headers.authorization;
 
       if (!authHeader) {
-        return res.status(401).json({ message: "No token provided" });
+        res.status(401).json({ message: "No token provided" });
+        return;
       }
 
       const token = authHeader.split(" ")[1];
 
       if (!token) {
-        return res.status(401).json({ message: "Invalid token format" });
+        res.status(401).json({ message: "Invalid token format" });
+        return;
       }
 
       const decoded = authService.verifyToken(token);
       req.user = decoded;
       next();
     } catch (error) {
-      return res.status(401).json({ message: "Invalid token" });
+      res.status(401).json({ message: "Invalid token" });
     }
   };
 };
