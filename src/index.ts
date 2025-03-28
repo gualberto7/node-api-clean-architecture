@@ -3,6 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { MongoUserRepository } from "./infrastructure/repositories/MongoUserRepository";
+import { createUserRoutes } from "./interfaces/routes/userRoutes";
 
 // Load environment variables
 dotenv.config();
@@ -24,9 +26,13 @@ mongoose
     console.error("MongoDB connection error:", error);
   });
 
+// Routes
+const userRepository = new MongoUserRepository();
+app.use("/api/users", createUserRoutes(userRepository));
+
 // Basic route
 app.get("/", (_req, res) => {
-  res.json({ message: "Welcome to Gym API xD" });
+  res.json({ message: "Welcome to Gym API" });
 });
 
 // Start server
