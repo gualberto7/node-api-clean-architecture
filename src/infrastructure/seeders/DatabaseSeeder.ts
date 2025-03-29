@@ -5,6 +5,7 @@ import { MongoUserRepository } from "../repositories/MongoUserRepository";
 import { MongoGymRepository } from "../repositories/MongoGymRepository";
 import { MongoClientRepository } from "../repositories/MongoClientRepository";
 import { AuthService } from "../services/AuthService";
+import { UserRole } from "../../domain/entities/User";
 
 export class DatabaseSeeder {
   private userFactory: UserFactory;
@@ -25,24 +26,23 @@ export class DatabaseSeeder {
   async seed() {
     try {
       // Crear usuarios
-      const users = await this.userFactory.createMany(3);
-      console.log("Users created:", users.length);
+      const owner = await this.userFactory.create({
+        role: UserRole.OWNER,
+        name: "Admin",
+        email: "admin@test.com",
+      });
 
-      // Crear gimnasios para cada usuario
-      for (const user of users) {
-        const gyms = await this.gymFactory.createMany(2, {
-          ownerId: user._id,
-        });
-        console.log(`Gyms created for user ${user._id}:`, gyms.length);
+      const gym = await this.gymFactory.create({
+        ownerId: owner._id,
+        name: "Gym 1",
+        address: "123 Main St",
+        phone: "1234567890",
+        email: "gym1@test.com",
+      });
 
-        // Crear clientes para cada gimnasio
-        for (const gym of gyms) {
-          const clients = await this.clientFactory.createMany(5, {
-            gymId: gym._id,
-          });
-          console.log(`Clients created for gym ${gym._id}:`, clients.length);
-        }
-      }
+      await this.clientFactory.createMany(10, {
+        gymId: gym._id,
+      });
 
       console.log("Database seeding completed successfully");
     } catch (error) {

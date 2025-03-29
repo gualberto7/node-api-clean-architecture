@@ -15,6 +15,7 @@ export class Client {
       relationship: string;
     },
     public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date()
+    public updatedAt: Date = new Date(),
+    public _id?: string
   ) {}
 }

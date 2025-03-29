@@ -5,22 +5,22 @@ import { ClientModel } from "../models/ClientModel";
 export class MongoClientRepository implements IClientRepository {
   async create(client: Client): Promise<Client> {
     const newClient = await ClientModel.create(client);
-    return newClient.toObject();
+    return newClient.toObject() as Client;
   }
 
   async findById(id: string): Promise<Client | null> {
     const client = await ClientModel.findById(id);
-    return client ? client.toObject() : null;
+    return client ? (client.toObject() as Client) : null;
   }
 
   async findByGymId(gymId: string): Promise<Client[]> {
     const clients = await ClientModel.find({ gymId });
-    return clients.map((client) => client.toObject());
+    return clients.map((client) => client.toObject() as Client);
   }
 
   async findByCi(ci: string): Promise<Client | null> {
     const client = await ClientModel.findOne({ ci });
-    return client ? client.toObject() : null;
+    return client ? (client.toObject() as Client) : null;
   }
 
   async update(id: string, client: Partial<Client>): Promise<Client | null> {
@@ -29,7 +29,7 @@ export class MongoClientRepository implements IClientRepository {
       { ...client, updatedAt: new Date() },
       { new: true }
     );
-    return updatedClient ? updatedClient.toObject() : null;
+    return updatedClient ? (updatedClient.toObject() as Client) : null;
   }
 
   async delete(id: string): Promise<boolean> {

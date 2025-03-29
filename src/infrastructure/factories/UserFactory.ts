@@ -10,8 +10,8 @@ export class UserFactory {
 
   async create(data: Partial<User> = {}): Promise<User> {
     const defaultUser: Partial<User> = {
-      email: `user${Math.random().toString(36).substring(7)}@example.com`,
-      password: await this.authService.hashPassword("password123"),
+      email: `user${Math.random().toString(36).substring(7)}@test.com`,
+      password: await this.authService.hashPassword("password"),
       name: "John",
       lastName: "Doe",
       role: UserRole.ADMIN,

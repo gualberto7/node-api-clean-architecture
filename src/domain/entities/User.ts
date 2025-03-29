@@ -1,6 +1,7 @@
 export enum UserRole {
   SUPER_ADMIN = "super_admin",
   ADMIN = "admin",
+  OWNER = "owner",
   INSTRUCTOR = "instructor",
 }
 
@@ -13,6 +14,7 @@ export class User {
     public role: UserRole,
     public gyms: string[] = [], // Array de IDs de gimnasios
     public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date()
+    public updatedAt: Date = new Date(),
+    public _id?: string
   ) {}
 }

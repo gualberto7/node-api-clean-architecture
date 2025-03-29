@@ -1,7 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import { Client } from "../../domain/entities/Client";
 
-export interface ClientDocument extends Omit<Client, "id">, Document {}
+export interface ClientDocument extends Omit<Client, "_id">, Document {}
 
 const clientSchema = new mongoose.Schema<ClientDocument>(
   {

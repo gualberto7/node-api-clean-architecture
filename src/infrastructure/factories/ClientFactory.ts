@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import { Client } from "../../domain/entities/Client";
 import { MongoClientRepository } from "../repositories/MongoClientRepository";
 
@@ -7,17 +8,17 @@ export class ClientFactory {
   async create(data: Partial<Client> = {}): Promise<Client> {
     const defaultClient: Partial<Client> = {
       ci: Math.random().toString().slice(2, 10),
-      name: "Juan",
-      email: `client${Math.random().toString(36).substring(7)}@example.com`,
-      phone: "+1234567890",
+      name: faker.person.fullName(),
+      email: faker.internet.email(),
+      phone: faker.phone.number(),
       gymId: data.gymId || "",
       subscriptionId: undefined,
-      birthDate: new Date("1990-01-01"),
-      gender: "M",
-      address: "Calle Principal 123",
+      birthDate: faker.date.birthdate(),
+      gender: faker.person.gender(),
+      address: faker.location.streetAddress(),
       emergencyContact: {
-        name: "María",
-        phone: "+9876543210",
+        name: faker.person.fullName(),
+        phone: faker.phone.number(),
         relationship: "Esposa",
       },
       createdAt: new Date(),
