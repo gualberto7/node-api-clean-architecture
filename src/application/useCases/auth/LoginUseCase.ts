@@ -23,11 +23,11 @@ export class LoginUseCase {
       throw new Error("Invalid credentials");
     }
 
-    const token = this.authService.generateToken(user.id!, user.email);
+    const token = this.authService.generateToken(user._id, user.email);
 
     return {
       user: {
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name,
         lastName: user.lastName,

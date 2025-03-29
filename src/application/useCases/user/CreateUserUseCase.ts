@@ -26,6 +26,8 @@ export class CreateUserUseCase {
     const user = await this.userRepository.create({
       ...userData,
       password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return user;
