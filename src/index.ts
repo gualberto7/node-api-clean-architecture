@@ -4,8 +4,10 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import { MongoUserRepository } from "./infrastructure/repositories/MongoUserRepository";
 import { MongoGymRepository } from "./infrastructure/repositories/MongoGymRepository";
+import { MongoClientRepository } from "./infrastructure/repositories/MongoClientRepository";
 import { createUserRoutes } from "./interfaces/routes/userRoutes";
 import { createGymRoutes } from "./interfaces/routes/gymRoutes";
+import { createClientRoutes } from "./interfaces/routes/clientRoutes";
 import { createAuthRoutes } from "./interfaces/routes/authRoutes";
 import { AuthService } from "./infrastructure/services/AuthService";
 import { authMiddleware } from "./interfaces/middleware/authMiddleware";
@@ -26,6 +28,7 @@ app.use(express.json());
 const authService = new AuthService();
 const userRepository = new MongoUserRepository();
 const gymRepository = new MongoGymRepository();
+const clientRepository = new MongoClientRepository();
 
 // Routes
 app.get("/", (_req, res) => {
@@ -46,6 +49,12 @@ app.use(
   "/api/gyms",
   authMiddleware(authService),
   createGymRoutes(gymRepository)
+);
+
+app.use(
+  "/api/clients",
+  authMiddleware(authService),
+  createClientRoutes(clientRepository)
 );
 
 // Start server
