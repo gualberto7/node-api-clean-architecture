@@ -2,6 +2,7 @@ import { Response } from "express";
 import { IClientRepository } from "../../domain/repositories/IClientRepository";
 import { CreateClientUseCase } from "../../application/useCases/client/CreateClientUseCase";
 import { AuthRequest } from "../middleware/authMiddleware";
+import { PaginationParams } from "../../domain/interfaces/PaginationParams";
 
 export class ClientController {
   constructor(private clientRepository: IClientRepository) {}
@@ -39,8 +40,19 @@ export class ClientController {
 
   async getClientsByGym(req: AuthRequest, res: Response) {
     try {
-      const clients = await this.clientRepository.findByGymId(req.params.gymId);
-      return res.json(clients);
+      const pagination: PaginationParams = {
+        page: parseInt(req.query.page as string) || 1,
+        limit: parseInt(req.query.limit as string) || 10,
+        sortBy: (req.query.sortBy as string) || "createdAt",
+        sortOrder: (req.query.sortOrder as "asc" | "desc") || "desc",
+        path: `/api/clients/gym/${req.params.gymId}`,
+      };
+
+      const result = await this.clientRepository.findByGymId(
+        req.params.gymId,
+        pagination
+      );
+      return res.json(result);
     } catch (error) {
       return res.status(500).json({ message: "Internal server error" });
     }
