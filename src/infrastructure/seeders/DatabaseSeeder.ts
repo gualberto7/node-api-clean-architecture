@@ -40,7 +40,7 @@ export class DatabaseSeeder {
         email: "gym1@test.com",
       });
 
-      await this.clientFactory.createMany(10, {
+      await this.clientFactory.createMany(150, {
         gymId: gym._id,
       });
 
