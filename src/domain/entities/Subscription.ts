@@ -7,7 +7,6 @@ export enum SubscriptionStatus {
 
 export class Subscription {
   constructor(
-    public id: string,
     public clientId: string,
     public membershipId: string,
     public gymId: string,
