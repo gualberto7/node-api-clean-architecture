@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { IGymRepository } from "../../domain/repositories/IGymRepository";
-import { Gym } from "../../domain/entities/Gym";
 import { PaginationParams } from "../../domain/interfaces/PaginationParams";
 
 export class GymController {
