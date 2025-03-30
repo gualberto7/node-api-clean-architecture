@@ -36,7 +36,10 @@ app.get("/", (_req, res) => {
 });
 
 // Public routes
-app.use("/api/auth", createAuthRoutes(userRepository, authService));
+app.use(
+  "/api/auth",
+  createAuthRoutes(userRepository, gymRepository, authService)
+);
 
 // Protected routes
 app.use(
