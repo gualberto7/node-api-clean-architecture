@@ -16,6 +16,11 @@ export interface IClientRepository {
     name: string,
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Client>>;
+  findByNameAndGymId(
+    name: string,
+    gymId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Client>>;
   update(id: string, client: Partial<Client>): Promise<Client | null>;
   delete(id: string): Promise<boolean>;
 }

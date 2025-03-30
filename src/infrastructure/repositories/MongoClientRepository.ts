@@ -42,6 +42,23 @@ export class MongoClientRepository
     return client ? (client.toObject() as Client) : null;
   }
 
+  async findByNameAndGymId(
+    name: string,
+    gymId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Client>> {
+    const query = {
+      gymId,
+      name: { $regex: name, $options: "i" },
+    };
+    const result = await this.paginate(query, pagination);
+
+    return {
+      ...result,
+      data: result.data.map((client) => client.toObject() as Client),
+    };
+  }
+
   async findByName(
     name: string,
     pagination: PaginationParams

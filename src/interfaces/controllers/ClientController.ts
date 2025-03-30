@@ -40,6 +40,7 @@ export class ClientController {
 
   async getClientsByGym(req: AuthRequest, res: Response) {
     try {
+      const { name } = req.query;
       const pagination: PaginationParams = {
         page: parseInt(req.query.page as string) || 1,
         limit: parseInt(req.query.limit as string) || 10,
@@ -48,10 +49,22 @@ export class ClientController {
         path: `/api/clients/gym/${req.params.gymId}`,
       };
 
-      const result = await this.clientRepository.findByGymId(
-        req.params.gymId,
-        pagination
-      );
+      let result;
+      if (name) {
+        // Si hay un nombre, buscar por nombre dentro del gimnasio
+        result = await this.clientRepository.findByNameAndGymId(
+          name as string,
+          req.params.gymId,
+          pagination
+        );
+      } else {
+        // Si no hay nombre, obtener todos los clientes del gimnasio
+        result = await this.clientRepository.findByGymId(
+          req.params.gymId,
+          pagination
+        );
+      }
+
       return res.json(result);
     } catch (error) {
       return res.status(500).json({ message: "Internal server error" });
