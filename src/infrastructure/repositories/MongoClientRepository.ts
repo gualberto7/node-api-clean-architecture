@@ -30,10 +30,19 @@ export class MongoClientRepository
     gymId: string,
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Client>> {
-    const result = await this.paginate({ gymId }, pagination);
+    const result = await this.paginate({ gym: gymId }, pagination);
+
+    const populatedData = await Promise.all(
+      result.data.map(async (client) => {
+        const populated = await client.populate([
+          { path: "subscription", select: "startDate endDate membership" },
+        ]);
+        return populated.toObject() as Client;
+      })
+    );
     return {
       ...result,
-      data: result.data.map((client) => client.toObject() as Client),
+      data: populatedData,
     };
   }
 

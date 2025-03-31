@@ -1,12 +1,13 @@
 import { IClientRepository } from "../../../domain/repositories/IClientRepository";
 import { Client } from "../../../domain/entities/Client";
+import { Schema } from "mongoose";
 
 export class CreateClientUseCase {
   constructor(private clientRepository: IClientRepository) {}
 
   async execute(
     clientData: Omit<Client, "createdAt" | "updatedAt">,
-    gymId: string
+    gymId: Schema.Types.ObjectId
   ): Promise<Client> {
     const client = new Client(
       clientData.ci,
@@ -14,7 +15,7 @@ export class CreateClientUseCase {
       clientData.email,
       clientData.phone,
       gymId,
-      clientData.subscriptionId,
+      undefined,
       clientData.birthDate,
       clientData.gender,
       clientData.address,

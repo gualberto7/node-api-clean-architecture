@@ -3,6 +3,7 @@ import { IClientRepository } from "../../domain/repositories/IClientRepository";
 import { CreateClientUseCase } from "../../application/useCases/client/CreateClientUseCase";
 import { AuthRequest } from "../middleware/authMiddleware";
 import { PaginationParams } from "../../domain/interfaces/PaginationParams";
+import { Schema } from "mongoose";
 
 export class ClientController {
   constructor(private clientRepository: IClientRepository) {}
@@ -14,7 +15,7 @@ export class ClientController {
       );
       const client = await createClientUseCase.execute(
         req.body,
-        req.params.gymId
+        new Schema.Types.ObjectId(req.params.gymId)
       );
       res.status(201).json(client);
     } catch (error) {
