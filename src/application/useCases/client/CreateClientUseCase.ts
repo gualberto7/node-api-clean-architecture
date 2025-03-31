@@ -15,7 +15,6 @@ export class CreateClientUseCase {
       clientData.email,
       clientData.phone,
       gymId,
-      undefined,
       clientData.birthDate,
       clientData.gender,
       clientData.address,
