@@ -4,6 +4,7 @@ export enum SubscriptionStatus {
   ACTIVE = "active",
   EXPIRED = "expired",
   PAUSED = "paused",
+  EXPIRES_TODAY = "expires_today",
   EXPIRES_SOON = "expires_soon",
   NOT_STARTED = "not_started",
 }
