@@ -5,10 +5,12 @@ import dotenv from "dotenv";
 import { MongoUserRepository } from "./infrastructure/repositories/MongoUserRepository";
 import { MongoGymRepository } from "./infrastructure/repositories/MongoGymRepository";
 import { MongoClientRepository } from "./infrastructure/repositories/MongoClientRepository";
+import { MongoMembershipRepository } from "./infrastructure/repositories/MongoMembershipRepository";
 import { createUserRoutes } from "./interfaces/routes/userRoutes";
 import { createGymRoutes } from "./interfaces/routes/gymRoutes";
 import { createClientRoutes } from "./interfaces/routes/clientRoutes";
 import { createAuthRoutes } from "./interfaces/routes/authRoutes";
+import { createMembershipRoutes } from "./interfaces/routes/membershipRoutes";
 import { AuthService } from "./infrastructure/services/AuthService";
 import { authMiddleware } from "./interfaces/middleware/authMiddleware";
 import { connectDB } from "./infrastructure/config/database";
@@ -29,6 +31,7 @@ const authService = new AuthService();
 const userRepository = new MongoUserRepository();
 const gymRepository = new MongoGymRepository();
 const clientRepository = new MongoClientRepository();
+const membershipRepository = new MongoMembershipRepository();
 
 // Routes
 app.get("/", (_req, res) => {
@@ -58,6 +61,12 @@ app.use(
   "/api/clients",
   authMiddleware(authService),
   createClientRoutes(clientRepository)
+);
+
+app.use(
+  "/api",
+  authMiddleware(authService),
+  createMembershipRoutes(membershipRepository)
 );
 
 // Start server

@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { Gym } from "../../domain/entities/Gym";
 
 export interface GymDocument extends Omit<Gym, "_id">, Document {}
@@ -10,9 +10,9 @@ const gymSchema = new mongoose.Schema<GymDocument>(
     phone: { type: String, required: true },
     email: { type: String, required: true },
     ownerId: { type: String, required: true },
-    memberships: [{ type: String }],
-    clients: [{ type: String }],
-    staff: [{ type: String }],
+    memberships: [{ type: Schema.Types.ObjectId, ref: "Membership" }],
+    clients: [{ type: Schema.Types.ObjectId, ref: "Client" }],
+    staff: [{ type: Schema.Types.ObjectId, ref: "Staff" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
