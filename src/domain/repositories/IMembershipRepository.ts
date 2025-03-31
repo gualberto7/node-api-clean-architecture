@@ -1,8 +1,4 @@
 import { Membership } from "../entities/Membership";
-import {
-  PaginationParams,
-  PaginatedResponse,
-} from "../interfaces/PaginationParams";
 
 export interface IMembershipRepository {
   create(membership: Membership): Promise<Membership>;
