@@ -1,18 +1,18 @@
 import { faker } from "@faker-js/faker";
 import { Client } from "../../domain/entities/Client";
 import { MongoClientRepository } from "../repositories/MongoClientRepository";
+import { ObjectId } from "mongoose";
 
 export class ClientFactory {
   constructor(private clientRepository: MongoClientRepository) {}
 
   async create(data: Partial<Client> = {}): Promise<Client> {
     const defaultClient: Partial<Client> = {
-      ci: Math.random().toString().slice(2, 10),
+      ci: faker.string.numeric(8),
       name: faker.person.fullName(),
       email: faker.internet.email(),
       phone: faker.phone.number(),
-      gymId: data.gymId || "",
-      subscriptionId: undefined,
+      gym: data.gym as ObjectId,
       birthDate: faker.date.birthdate(),
       gender: faker.person.gender(),
       address: faker.location.streetAddress(),
