@@ -4,6 +4,7 @@ import { AuthService } from "../../infrastructure/services/AuthService";
 export interface AuthRequest extends Request {
   user?: {
     userId: string;
+    name: string;
     email: string;
   };
 }

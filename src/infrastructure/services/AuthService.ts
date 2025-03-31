@@ -17,8 +17,8 @@ export class AuthService {
     return bcrypt.compare(password, hashedPassword);
   }
 
-  generateToken(userId: string, email: string): string {
-    return jwt.sign({ userId, email }, this.JWT_SECRET, {
+  generateToken(userId: string, name: string, email: string): string {
+    return jwt.sign({ userId, name, email }, this.JWT_SECRET, {
       expiresIn: this.JWT_EXPIRES_IN,
     });
   }
