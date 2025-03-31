@@ -26,11 +26,21 @@ export class MongoSubscriptionRepository
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Subscription>> {
     const result = await this.paginate({ gym: gymId }, pagination);
+
+    // Populate client and membership data
+    const populatedData = await Promise.all(
+      result.data.map(async (subscription) => {
+        const populated = await subscription.populate([
+          { path: "client", select: "name email phone" },
+          { path: "membership", select: "name price duration status" },
+        ]);
+        return populated.toObject() as Subscription;
+      })
+    );
+
     return {
       ...result,
-      data: result.data.map(
-        (subscription) => subscription.toObject() as Subscription
-      ),
+      data: populatedData,
     };
   }
 
@@ -39,11 +49,21 @@ export class MongoSubscriptionRepository
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Subscription>> {
     const result = await this.paginate({ clientId }, pagination);
+
+    // Populate client and membership data
+    const populatedData = await Promise.all(
+      result.data.map(async (subscription) => {
+        const populated = await subscription.populate([
+          { path: "client", select: "name email phone" },
+          { path: "membership", select: "name price duration status" },
+        ]);
+        return populated.toObject() as Subscription;
+      })
+    );
+
     return {
       ...result,
-      data: result.data.map(
-        (subscription) => subscription.toObject() as Subscription
-      ),
+      data: populatedData,
     };
   }
 
@@ -52,11 +72,21 @@ export class MongoSubscriptionRepository
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Subscription>> {
     const result = await this.paginate({ membershipId }, pagination);
+
+    // Populate client and membership data
+    const populatedData = await Promise.all(
+      result.data.map(async (subscription) => {
+        const populated = await subscription.populate([
+          { path: "client", select: "name email phone" },
+          { path: "membership", select: "name price duration status" },
+        ]);
+        return populated.toObject() as Subscription;
+      })
+    );
+
     return {
       ...result,
-      data: result.data.map(
-        (subscription) => subscription.toObject() as Subscription
-      ),
+      data: populatedData,
     };
   }
 }
