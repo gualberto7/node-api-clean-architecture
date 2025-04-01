@@ -37,7 +37,7 @@ export class AuthController {
     }
   }
 
-  async logout(req: Request, res: Response) {
+  async logout(_req: Request, res: Response) {
     console.log("logout");
     return res.status(200).json({ message: "Logged out successfully" });
   }

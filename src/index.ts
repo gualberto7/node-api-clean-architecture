@@ -18,11 +18,12 @@ import { createSubscriptionRoutes } from "./interfaces/routes/subscriptionRoutes
 import { MongoSubscriptionRepository } from "./infrastructure/repositories/MongoSubscriptionRepository";
 import { createEntryRoutes } from "./interfaces/routes/entryRoutes";
 import { MongoEntryRepository } from "./infrastructure/repositories/MongoEntryRepository";
+
 // Load environment variables
 dotenv.config();
 
 // Initialize express app
-const app = express();
+export const app = express();
 
 // Middleware
 app.use(helmet());
@@ -37,6 +38,7 @@ const clientRepository = new MongoClientRepository();
 const membershipRepository = new MongoMembershipRepository();
 const subscriptionRepository = new MongoSubscriptionRepository();
 const entryRepository = new MongoEntryRepository();
+
 // Routes
 app.get("/", (_req, res) => {
   res.json({ message: "Welcome to Gym API" });
@@ -90,4 +92,7 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Solo iniciar el servidor si no estamos en modo test
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
