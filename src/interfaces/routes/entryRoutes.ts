@@ -23,6 +23,13 @@ export const createEntryRoutes = (entryRepository: IEntryRepository) => {
     "/gym/:gymId/entries/membership/:membershipId",
     wrapAsync(entryController.getEntriesByMembershipId.bind(entryController))
   );
-
+  router.get(
+    "/gym/:gymId/entries/client/:clientId/subscription/:subscriptionId",
+    wrapAsync(
+      entryController.getEntriesByClientIdAndSubscriptionId.bind(
+        entryController
+      )
+    )
+  );
   return router;
 };

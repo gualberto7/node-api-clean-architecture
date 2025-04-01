@@ -91,4 +91,20 @@ export class MongoEntryRepository
       data: populatedData,
     };
   }
+
+  async findByClientIdAndSubscriptionId(
+    clientId: string,
+    subscriptionId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Entry>> {
+    const result = await this.paginate(
+      { client: clientId, subscription: subscriptionId },
+      pagination
+    );
+
+    return {
+      ...result,
+      data: result.data.map((entry) => entry.toObject() as Entry),
+    };
+  }
 }

@@ -78,4 +78,25 @@ export class EntryController {
       return res.status(500).json({ message: "Error fetching entries", error });
     }
   }
+
+  async getEntriesByClientIdAndSubscriptionId(req: AuthRequest, res: Response) {
+    const pagination: PaginationParams = {
+      page: parseInt(req.query.page as string) || 1,
+      limit: parseInt(req.query.limit as string) || 10,
+      sortBy: (req.query.sortBy as string) || "createdAt",
+      sortOrder: (req.query.sortOrder as "asc" | "desc") || "desc",
+      path: `/api/gym/${req.params.gymId}/entries/client/${req.params.clientId}/subscription/${req.params.subscriptionId}`,
+    };
+    try {
+      const entries =
+        await this.entryRepository.findByClientIdAndSubscriptionId(
+          req.params.clientId,
+          req.params.subscriptionId,
+          pagination
+        );
+      return res.json(entries);
+    } catch (error) {
+      return res.status(500).json({ message: "Error fetching entries", error });
+    }
+  }
 }

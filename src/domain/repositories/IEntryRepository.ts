@@ -20,4 +20,9 @@ export interface IEntryRepository {
     membershipId: string,
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Entry>>;
+  findByClientIdAndSubscriptionId(
+    clientId: string,
+    subscriptionId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Entry>>;
 }
