@@ -44,6 +44,31 @@ export class MongoSubscriptionRepository
     };
   }
 
+  async findByClientIdAndGymId(
+    clientId: string,
+    gymId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Subscription>> {
+    const result = await this.paginate(
+      { client: clientId, gym: gymId },
+      pagination
+    );
+
+    const populatedData = await Promise.all(
+      result.data.map(async (subscription) => {
+        const populated = await subscription.populate([
+          { path: "membership", select: "name price duration" },
+        ]);
+        return populated.toObject() as Subscription;
+      })
+    );
+
+    return {
+      ...result,
+      data: populatedData,
+    };
+  }
+
   async findByClientId(
     clientId: string,
     pagination: PaginationParams

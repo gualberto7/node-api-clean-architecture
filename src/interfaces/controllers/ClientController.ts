@@ -4,9 +4,12 @@ import { CreateClientUseCase } from "../../application/useCases/client/CreateCli
 import { AuthRequest } from "../middleware/authMiddleware";
 import { PaginationParams } from "../../domain/interfaces/PaginationParams";
 import { Schema } from "mongoose";
-
+import { ISubscriptionRepository } from "../../domain/repositories/ISubscriptionRepository";
 export class ClientController {
-  constructor(private clientRepository: IClientRepository) {}
+  constructor(
+    private clientRepository: IClientRepository,
+    private subscriptionRepository: ISubscriptionRepository
+  ) {}
 
   async createClient(req: AuthRequest, res: Response) {
     try {
@@ -34,6 +37,24 @@ export class ClientController {
         return res.status(404).json({ message: "Client not found" });
       }
       return res.json(client);
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async getGymClientDetails(req: AuthRequest, res: Response) {
+    try {
+      const client = await this.clientRepository.findById(req.params.id);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found" });
+      }
+      const subscription =
+        await this.subscriptionRepository.findByClientIdAndGymId(
+          client._id as string,
+          req.params.gymId,
+          { page: 1, limit: 100, sortBy: "createdAt", sortOrder: "desc" }
+        );
+      return res.json({ client, subscription });
     } catch (error) {
       return res.status(500).json({ message: "Internal server error" });
     }

@@ -14,6 +14,11 @@ export interface ISubscriptionRepository {
     clientId: string,
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Subscription>>;
+  findByClientIdAndGymId(
+    clientId: string,
+    gymId: string,
+    pagination: PaginationParams
+  ): Promise<PaginatedResponse<Subscription>>;
   findByMembershipId(
     membershipId: string,
     pagination: PaginationParams

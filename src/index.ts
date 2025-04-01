@@ -64,14 +64,9 @@ app.use(
 );
 
 app.use(
-  "/api/clients",
-  authMiddleware(authService),
-  createClientRoutes(clientRepository)
-);
-
-app.use(
   "/api",
   authMiddleware(authService),
+  createClientRoutes(clientRepository, subscriptionRepository),
   createMembershipRoutes(membershipRepository),
   createSubscriptionRoutes(subscriptionRepository),
   createEntryRoutes(entryRepository)
