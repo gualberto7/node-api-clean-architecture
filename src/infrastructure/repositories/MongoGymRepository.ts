@@ -27,7 +27,7 @@ export class MongoGymRepository
   }
 
   async findByOwnerId(ownerId: string): Promise<Gym[]> {
-    const gyms = await this.model.find({ ownerId });
+    const gyms = await this.model.find({ user: ownerId });
     return gyms.map((gym) => gym.toObject() as Gym);
   }
 
