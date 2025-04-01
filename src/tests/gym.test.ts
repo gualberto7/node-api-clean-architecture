@@ -1,41 +1,72 @@
 import request from "supertest";
 import { app } from "../index";
 import { connectDB } from "../infrastructure/config/database";
-import { DatabaseSeeder } from "../infrastructure/seeders/DatabaseSeeder";
 import { MongoUserRepository } from "../infrastructure/repositories/MongoUserRepository";
+import { MongoGymRepository } from "../infrastructure/repositories/MongoGymRepository";
 import { AuthService } from "../infrastructure/services/AuthService";
+import { UserRole } from "../domain/entities/User";
+import { UserModel } from "../infrastructure/models/UserModel";
+import { GymModel } from "../infrastructure/models/GymModel";
+import { Gym } from "../domain/entities/Gym";
+import { ObjectId } from "mongoose";
+import { UserFactory } from "../infrastructure/factories/UserFactory";
 
 describe("Gym API", () => {
   let authToken: string;
+  let userRepository: MongoUserRepository;
+  let gymRepository: MongoGymRepository;
+  let authService: AuthService;
+  let userFactory: UserFactory;
 
   beforeAll(async () => {
     // Conectar a la base de datos de test
     await connectDB();
 
-    // Limpiar y sembrar datos de prueba
-    const seeder = new DatabaseSeeder();
-    await seeder.seed();
+    // Inicializar repositorios y servicios
+    userRepository = new MongoUserRepository();
+    gymRepository = new MongoGymRepository();
+    authService = new AuthService();
+    userFactory = new UserFactory(userRepository, authService);
+  });
 
-    // Obtener token de autenticación
-    const userRepository = new MongoUserRepository();
-    const authService = new AuthService();
-    const owner = await userRepository.findByEmail("admin@test.com");
+  beforeEach(async () => {
+    // Limpiar la base de datos antes de cada test
+    await Promise.all([UserModel.deleteMany({}), GymModel.deleteMany({})]);
+  });
 
-    if (owner) {
+  describe("GET /api/gyms", () => {
+    it("should return all gyms for authenticated user", async () => {
+      // Crear datos específicos para este test
+      const owner = await userFactory.create({
+        role: UserRole.OWNER,
+        name: "Admin",
+        email: "admin@test.com",
+      });
+
+      const gym: Gym = {
+        name: "Test Gym",
+        address: "Test Address",
+        phone: "1234567890",
+        email: "gym@test.com",
+        user: owner._id as unknown as ObjectId,
+        memberships: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await gymRepository.create(gym);
+
+      // Generar token para el owner
       authToken = authService.generateToken(
         owner._id as string,
         owner.name,
         owner.email
       );
-    }
-  });
 
-  describe("GET /api/gyms", () => {
-    it("should return all gyms for authenticated user", async () => {
       const response = await request(app)
         .get("/api/gyms")
         .set("Authorization", `Bearer ${authToken}`);
-      console.log(response.body);
+
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBeGreaterThan(0);
       expect(response.body.data[0]).toHaveProperty("_id");
