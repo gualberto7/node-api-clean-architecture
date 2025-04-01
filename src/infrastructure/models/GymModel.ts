@@ -9,16 +9,10 @@ const gymSchema = new mongoose.Schema<GymDocument>(
     address: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },
-    ownerId: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     memberships: [{ type: Schema.Types.ObjectId, ref: "Membership" }],
-    clients: [{ type: Schema.Types.ObjectId, ref: "Client" }],
-    staff: [{ type: Schema.Types.ObjectId, ref: "Staff" }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export const GymModel = mongoose.model<GymDocument>("Gym", gymSchema);

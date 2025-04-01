@@ -68,7 +68,7 @@ export class DatabaseSeeder {
       });
 
       const gym = await this.gymFactory.create({
-        ownerId: owner._id,
+        user: owner._id as unknown as ObjectId,
         name: "Gym 1",
         address: "123 Main St",
         phone: "1234567890",

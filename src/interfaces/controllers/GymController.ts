@@ -1,20 +1,21 @@
-import { Request, Response } from "express";
-import { IGymRepository } from "../../domain/repositories/IGymRepository";
-import { CreateGymUseCase } from "../../application/useCases/gym/CreateGymUseCase";
+import { Response } from "express";
 import { AuthRequest } from "../middleware/authMiddleware";
+import { IGymRepository } from "../../domain/repositories/IGymRepository";
 
 export class GymController {
   constructor(private gymRepository: IGymRepository) {}
 
   async createGym(req: AuthRequest, res: Response) {
-    console.log(req.user);
+    const gymData = {
+      ...req.body,
+      user: req.user!.userId,
+    };
     try {
-      const createGymUseCase = new CreateGymUseCase(this.gymRepository);
-      const gym = await createGymUseCase.execute(req.body, req.user!.userId);
+      const gym = await this.gymRepository.create(gymData);
       res.status(201).json(gym);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ message: error });
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
@@ -44,7 +45,10 @@ export class GymController {
 
   async getAllGyms(req: AuthRequest, res: Response) {
     try {
-      const gyms = await this.gymRepository.findAll();
+      const gyms = await this.gymRepository.findAll({
+        page: req.query.page ? parseInt(req.query.page as string) : 1,
+        limit: req.query.limit ? parseInt(req.query.limit as string) : 10,
+      });
       res.json(gyms);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
@@ -59,7 +63,7 @@ export class GymController {
       }
 
       // Verificar que el usuario sea el propietario
-      if (gym.ownerId !== req.user!.userId) {
+      if (gym.user.toString() !== req.user!.userId) {
         return res
           .status(403)
           .json({ message: "Not authorized to update this gym" });
@@ -83,7 +87,7 @@ export class GymController {
       }
 
       // Verificar que el usuario sea el propietario
-      if (gym.ownerId !== req.user!.userId) {
+      if (gym.user.toString() !== req.user!.userId) {
         return res
           .status(403)
           .json({ message: "Not authorized to delete this gym" });

@@ -10,12 +10,7 @@ export class GymFactory {
       address: "Calle Principal 123",
       phone: "+1234567890",
       email: `gym${Math.random().toString(36).substring(7)}@example.com`,
-      ownerId: data.ownerId || "",
-      memberships: [],
-      clients: [],
-      staff: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      user: data.user,
     };
 
     const gymData = { ...defaultGym, ...data };
