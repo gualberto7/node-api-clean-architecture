@@ -16,7 +16,8 @@ import { authMiddleware } from "./interfaces/middleware/authMiddleware";
 import { connectDB } from "./infrastructure/config/database";
 import { createSubscriptionRoutes } from "./interfaces/routes/subscriptionRoutes";
 import { MongoSubscriptionRepository } from "./infrastructure/repositories/MongoSubscriptionRepository";
-
+import { createEntryRoutes } from "./interfaces/routes/entryRoutes";
+import { MongoEntryRepository } from "./infrastructure/repositories/MongoEntryRepository";
 // Load environment variables
 dotenv.config();
 
@@ -35,6 +36,7 @@ const gymRepository = new MongoGymRepository();
 const clientRepository = new MongoClientRepository();
 const membershipRepository = new MongoMembershipRepository();
 const subscriptionRepository = new MongoSubscriptionRepository();
+const entryRepository = new MongoEntryRepository();
 // Routes
 app.get("/", (_req, res) => {
   res.json({ message: "Welcome to Gym API" });
@@ -69,7 +71,8 @@ app.use(
   "/api",
   authMiddleware(authService),
   createMembershipRoutes(membershipRepository),
-  createSubscriptionRoutes(subscriptionRepository)
+  createSubscriptionRoutes(subscriptionRepository),
+  createEntryRoutes(entryRepository)
 );
 
 // Start server
