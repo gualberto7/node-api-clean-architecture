@@ -2,34 +2,23 @@ import request from "supertest";
 import { app } from "../../index";
 import { UserRole } from "../../domain/entities/User";
 import { ObjectId } from "mongoose";
-import { TestBase } from "../testBase";
 
 describe("Client API", () => {
-  const testBase = new TestBase();
-
-  beforeAll(async () => {
-    await testBase.setup();
-  });
-
-  beforeEach(async () => {
-    await testBase.cleanup();
-  });
-
   describe("GET /api/clients", () => {
     it("should return all clients for authenticated owner", async () => {
       // Crear datos específicos para este test
-      const owner = await testBase.userFactory.create({
+      const owner = await global.testBase.userFactory.create({
         role: UserRole.OWNER,
         name: "Admin",
       });
 
-      const gym = await testBase.gymFactory.create({
+      const gym = await global.testBase.gymFactory.create({
         name: "Test Gym",
         user: owner._id as unknown as ObjectId,
       });
 
       // Generar token para el owner
-      testBase.authToken = testBase.authService.generateToken(
+      global.testBase.authToken = global.testBase.authService.generateToken(
         owner._id as string,
         owner.name,
         owner.email
@@ -37,7 +26,7 @@ describe("Client API", () => {
 
       const response = await request(app)
         .get(`/api/gym/${gym._id}/clients`)
-        .set("Authorization", `Bearer ${testBase.authToken}`);
+        .set("Authorization", `Bearer ${global.testBase.authToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
@@ -45,7 +34,7 @@ describe("Client API", () => {
     });
 
     it("should return 401 for unauthenticated requests", async () => {
-      const response = await request(app).get("/api/clients");
+      const response = await request(app).get(`/api/gym/45635435/clients`);
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty("message", "No token provided");
@@ -53,7 +42,7 @@ describe("Client API", () => {
 
     it("should return 401 for invalid token", async () => {
       const response = await request(app)
-        .get("/api/clients")
+        .get(`/api/gym/45635435/clients`)
         .set("Authorization", "Bearer invalid-token");
 
       expect(response.status).toBe(401);

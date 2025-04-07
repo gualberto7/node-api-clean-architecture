@@ -1,6 +1,7 @@
 import { User, UserRole } from "../../domain/entities/User";
 import { MongoUserRepository } from "../repositories/MongoUserRepository";
 import { AuthService } from "../services/AuthService";
+import { faker } from "@faker-js/faker";
 
 export class UserFactory {
   constructor(
@@ -10,14 +11,11 @@ export class UserFactory {
 
   async create(data: Partial<User> = {}): Promise<User> {
     const defaultUser: Partial<User> = {
-      email: `user${Math.random().toString(36).substring(7)}@test.com`,
+      email: faker.internet.email(),
       password: await this.authService.hashPassword("password"),
-      name: "John",
-      lastName: "Doe",
+      name: faker.name.firstName(),
+      lastName: faker.name.lastName(),
       role: UserRole.ADMIN,
-      gyms: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     const userData = { ...defaultUser, ...data };
