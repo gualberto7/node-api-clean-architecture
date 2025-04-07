@@ -49,7 +49,7 @@ export class MongoClientRepository
     pagination: PaginationParams
   ): Promise<PaginatedResponse<Client>> {
     const query = {
-      gymId,
+      gym: gymId,
       name: { $regex: name, $options: "i" },
     };
     const result = await this.paginate(query, pagination);
