@@ -1,63 +1,35 @@
 import request from "supertest";
 import { app } from "../index";
-import { connectDB } from "../infrastructure/config/database";
-import { MongoUserRepository } from "../infrastructure/repositories/MongoUserRepository";
-import { MongoGymRepository } from "../infrastructure/repositories/MongoGymRepository";
-import { AuthService } from "../infrastructure/services/AuthService";
 import { UserRole } from "../domain/entities/User";
-import { UserModel } from "../infrastructure/models/UserModel";
-import { GymModel } from "../infrastructure/models/GymModel";
-import { Gym } from "../domain/entities/Gym";
 import { ObjectId } from "mongoose";
-import { UserFactory } from "../infrastructure/factories/UserFactory";
+import { TestBase } from "./testBase";
 
 describe("Gym API", () => {
-  let authToken: string;
-  let userRepository: MongoUserRepository;
-  let gymRepository: MongoGymRepository;
-  let authService: AuthService;
-  let userFactory: UserFactory;
+  const testBase = new TestBase();
 
   beforeAll(async () => {
-    // Conectar a la base de datos de test
-    await connectDB();
-
-    // Inicializar repositorios y servicios
-    userRepository = new MongoUserRepository();
-    gymRepository = new MongoGymRepository();
-    authService = new AuthService();
-    userFactory = new UserFactory(userRepository, authService);
+    await testBase.setup();
   });
 
   beforeEach(async () => {
-    // Limpiar la base de datos antes de cada test
-    await Promise.all([UserModel.deleteMany({}), GymModel.deleteMany({})]);
+    await testBase.cleanup();
   });
 
   describe("GET /api/gyms", () => {
     it("should return all gyms for authenticated user", async () => {
       // Crear datos específicos para este test
-      const owner = await userFactory.create({
+      const owner = await testBase.userFactory.create({
         role: UserRole.OWNER,
         name: "Admin",
-        email: "admin@test.com",
       });
 
-      const gym: Gym = {
+      await testBase.gymFactory.create({
         name: "Test Gym",
-        address: "Test Address",
-        phone: "1234567890",
-        email: "gym@test.com",
         user: owner._id as unknown as ObjectId,
-        memberships: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      await gymRepository.create(gym);
+      });
 
       // Generar token para el owner
-      authToken = authService.generateToken(
+      testBase.authToken = testBase.authService.generateToken(
         owner._id as string,
         owner.name,
         owner.email
@@ -65,7 +37,7 @@ describe("Gym API", () => {
 
       const response = await request(app)
         .get("/api/gyms")
-        .set("Authorization", `Bearer ${authToken}`);
+        .set("Authorization", `Bearer ${testBase.authToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBeGreaterThan(0);
