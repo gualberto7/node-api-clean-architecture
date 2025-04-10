@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker/.";
 import { Gym } from "../../domain/entities/Gym";
 import { MongoGymRepository } from "../repositories/MongoGymRepository";
 
@@ -6,10 +7,10 @@ export class GymFactory {
 
   async create(data: Partial<Gym> = {}): Promise<Gym> {
     const defaultGym: Partial<Gym> = {
-      name: `Gym ${Math.random().toString(36).substring(7)}`,
-      address: "Calle Principal 123",
-      phone: "+1234567890",
-      email: `gym${Math.random().toString(36).substring(7)}@example.com`,
+      name: faker.company.name(),
+      address: faker.location.streetAddress(),
+      phone: faker.phone.number(),
+      email: faker.internet.email(),
       user: data.user,
     };
 

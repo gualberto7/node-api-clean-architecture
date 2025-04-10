@@ -13,8 +13,8 @@ export class UserFactory {
     const defaultUser: Partial<User> = {
       email: faker.internet.email(),
       password: await this.authService.hashPassword("password"),
-      name: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      name: faker.person.firstName(),
+      lastName: faker.person.lastName(),
       role: UserRole.ADMIN,
     };
 
