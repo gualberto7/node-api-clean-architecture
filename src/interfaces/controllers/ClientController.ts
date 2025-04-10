@@ -1,9 +1,7 @@
 import { Response } from "express";
-import { IClientRepository } from "../../domain/repositories/IClientRepository";
-import { CreateClientUseCase } from "../../application/useCases/client/CreateClientUseCase";
 import { AuthRequest } from "../middleware/authMiddleware";
 import { PaginationParams } from "../../domain/interfaces/PaginationParams";
-import { Schema } from "mongoose";
+import { IClientRepository } from "../../domain/repositories/IClientRepository";
 import { ISubscriptionRepository } from "../../domain/repositories/ISubscriptionRepository";
 export class ClientController {
   constructor(
@@ -13,13 +11,11 @@ export class ClientController {
 
   async createClient(req: AuthRequest, res: Response) {
     try {
-      const createClientUseCase = new CreateClientUseCase(
-        this.clientRepository
-      );
-      const client = await createClientUseCase.execute(
-        req.body,
-        new Schema.Types.ObjectId(req.params.gymId)
-      );
+      const data = {
+        ...req.body,
+        gym: req.params.gymId,
+      };
+      const client = await this.clientRepository.create(data);
       res.status(201).json(client);
     } catch (error) {
       if (error instanceof Error) {
