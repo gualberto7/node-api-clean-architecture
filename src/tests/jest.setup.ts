@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import { connectDB, disconnectDB } from "../infrastructure/config/database";
 import { MongoUserRepository } from "../infrastructure/repositories/MongoUserRepository";
 import { MongoGymRepository } from "../infrastructure/repositories/MongoGymRepository";
@@ -7,6 +8,9 @@ import { GymModel } from "../infrastructure/models/GymModel";
 import { ClientModel } from "../infrastructure/models/ClientModel";
 import { UserFactory } from "../infrastructure/factories/UserFactory";
 import { GymFactory } from "../infrastructure/factories/GymFactory";
+
+// Cargar variables de entorno de test
+dotenv.config({ path: ".env.test" });
 
 // Inicializar variables globales
 global.testBase = {
