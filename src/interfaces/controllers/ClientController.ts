@@ -58,7 +58,6 @@ export class ClientController {
 
   async getClientsByGym(req: AuthRequest, res: Response) {
     try {
-      console.log(req.user);
       const { name } = req.query;
       const pagination: PaginationParams = {
         page: parseInt(req.query.page as string) || 1,
