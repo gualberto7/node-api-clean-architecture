@@ -13,6 +13,7 @@ export class User {
     public lastName: string,
     public role: UserRole,
     public gyms: string[] = [], // Array de IDs de gimnasios
+    public active: boolean = true, // Campo para activar/desactivar usuarios
     public createdAt: Date = new Date(),
     public updatedAt: Date = new Date(),
     public _id?: string

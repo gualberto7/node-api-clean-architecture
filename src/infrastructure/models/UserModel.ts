@@ -31,6 +31,10 @@ const userSchema = new Schema<UserDocument>(
       enum: Object.values(UserRole),
       default: UserRole.ADMIN,
     },
+    active: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
